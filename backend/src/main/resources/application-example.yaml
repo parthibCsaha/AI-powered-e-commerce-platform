@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_name_here
+    username: postgres
+    password: your_database_password_here
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  ai:
+    groq:
+      api-key: your_groq_api_key_here
+      model: llama-3.3-70b-versatile
+      base-url: https://api.groq.com/v1
