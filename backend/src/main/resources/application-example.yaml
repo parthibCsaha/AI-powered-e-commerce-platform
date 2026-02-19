@@ -19,5 +19,5 @@ app:
   ai:
     groq:
       api-key: your_groq_api_key_here
-      model: llama-3.3-70b-versatile
-      base-url: https://api.groq.com/v1
+      model: model_name_here
+      base-url: base_url_here
