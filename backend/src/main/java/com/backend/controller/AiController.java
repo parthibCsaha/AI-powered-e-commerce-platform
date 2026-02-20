@@ -1,12 +1,15 @@
 package com.backend.controller;
 
-import com.backend.dto.AiRequest;
+import com.backend.dto.AiSearchRequest;
+import com.backend.entity.Product;
 import com.backend.service.AiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,10 +18,9 @@ public class AiController {
 
     private final AiService aiService;
 
-    @PostMapping("/ask")
-    public String ask(@RequestBody AiRequest request) {
-        System.out.println("Received prompt: " + request.prompt());
-        return aiService.askAI(request.prompt());
+    @PostMapping("/search")
+    public List<Product> searchProducts(@RequestBody AiSearchRequest request) {
+        return aiService.searchProducts(request.query());
     }
 
 }
