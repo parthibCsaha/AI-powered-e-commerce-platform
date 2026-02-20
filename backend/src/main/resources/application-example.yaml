@@ -20,4 +20,3 @@ app:
     groq:
       api-key: your_groq_api_key_here
       model: model_name_here
-      base-url: base_url_here
