@@ -27,7 +27,7 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    private String color;
+    private String brand;
 
     @Column(nullable = false)
     private Double price;
@@ -35,9 +35,8 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(nullable = false)
+    private Double rating;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems;

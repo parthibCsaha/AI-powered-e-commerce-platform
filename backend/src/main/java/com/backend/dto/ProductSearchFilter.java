@@ -3,10 +3,11 @@ package com.backend.dto;
 import java.util.List;
 
 public record ProductSearchFilter(
-        String category,
-        String color,
-        Double minPrice,
-        Double maxPrice,
-        List<String> keywords
-) {
+                String brand,
+                String productName,
+                String category,
+                Double minPrice,
+                Double maxPrice,
+                Double minRating,
+                List<String> keywords) {
 }
