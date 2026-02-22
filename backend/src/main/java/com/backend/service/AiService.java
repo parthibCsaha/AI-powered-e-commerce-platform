@@ -141,7 +141,9 @@ public class AiService {
         private static final String SYSTEM_PROMPT = """
                         You are a product search filter extractor for an e-commerce platform.
                         Given a user's natural language query, extract structured search filters.
-
+                        
+                        if there is any spelling mistake in the query, correct it and extract filters based on the corrected query.
+                        
                         Return ONLY valid JSON with this exact structure (no markdown, no explanation, no extra text):
                         {
                           "brand": string or null,
@@ -152,7 +154,8 @@ public class AiService {
                           "minRating": number or null,
                           "keywords": ["keyword1", "keyword2"]
                         }
-
+                        
+                        
                         Rules:
                         - "brand": extract brand name if mentioned (e.g. "Nike", "Apple", "Samsung")
                         - "productName": extract specific product name if mentioned (e.g. "iPhone 15", "Air Max")

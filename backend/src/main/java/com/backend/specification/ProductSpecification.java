@@ -67,17 +67,17 @@ public class ProductSpecification {
                                                 continue;
                                         String pattern = "%" + keyword.toLowerCase() + "%";
                                         keywordPredicates.add(
-                                                        cb.or(
-                                                                        cb.like(cb.lower(root.get("name")), pattern),
-                                                                        cb.like(cb.lower(root.get("description")),
-                                                                                        pattern)));
+                                                cb.or(
+                                                        cb.like(cb.lower(root.get("name")), pattern),
+                                                        cb.like(cb.lower(root.get("description")), pattern)
+                                                )
+                                        );
                                 }
                                 if (!keywordPredicates.isEmpty()) {
                                         // OR between keywords — match products containing ANY keyword
                                         predicates.add(cb.or(keywordPredicates.toArray(new Predicate[0])));
                                 }
                         }
-
                         return predicates.isEmpty()
                                         ? cb.conjunction()
                                         : cb.and(predicates.toArray(new Predicate[0]));
