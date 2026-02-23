@@ -20,3 +20,6 @@ app:
     groq:
       api-key: your_groq_api_key_here
       model: model_name_here
+jwt:
+    secret: your_jwt_secret_here
+    expiration: your_jwt_expiration_time_in_milliseconds_here

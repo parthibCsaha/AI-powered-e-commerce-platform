@@ -1,6 +1,7 @@
 package com.backend.controller;
 
 import com.backend.dto.LoginRequest;
+import com.backend.dto.RegisterRequest;
 import com.backend.entity.User;
 import com.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
+    public String register(@RequestBody RegisterRequest registerRequest) {
 
-        return authService.register(user);
+        return authService.register(registerRequest);
 
     }
 

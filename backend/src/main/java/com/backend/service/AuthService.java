@@ -1,8 +1,10 @@
 package com.backend.service;
 
 import com.backend.dto.LoginRequest;
+import com.backend.dto.RegisterRequest;
 import com.backend.entity.User;
 import com.backend.repository.UserRepository;
+import com.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,27 +19,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final JwtUtil jwtUtil;
+
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    public String register(User user) {
+    public String register(RegisterRequest registerRequest) {
         User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setEmail(user.getEmail());
-        // Encode password before saving
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        newUser.setRole(user.getRole());
+        newUser.setUsername(registerRequest.username());
+        newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
+        newUser.setEmail(registerRequest.email());
+        newUser.setRole(registerRequest.role());
         User savedUser = userRepository.save(newUser);
         log.info("new user :{}", savedUser);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                registerRequest.username(),
+                registerRequest.password()
+        );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "User registered successfully with id: " + savedUser.getId();
+        return "User registered successfully with id: " + savedUser.getUsername();
     }
 
     public String login(LoginRequest loginRequest) {
@@ -64,7 +70,11 @@ public class AuthService {
             return "Invalid username or password";
         }
 
-        return "User logged in successfully";
+        String jwt = jwtUtil.generateToken(loginRequest.username());
+        log.info("Generated JWT for user {}: {}", loginRequest.username(), jwt);
+
+
+        return "Login successful. JWT token: " + jwt;
     }
 
 
