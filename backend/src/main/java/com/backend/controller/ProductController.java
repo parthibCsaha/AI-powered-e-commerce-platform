@@ -1,13 +1,9 @@
 package com.backend.controller;
 
 import com.backend.dto.ProductResponse;
-import com.backend.repository.ProductRepository;
 import com.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,7 +22,15 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse getProduct(@PathVariable Long id) {
         return productService.getProduct(id);
+    }
 
+    @GetMapping("/search")
+    public List<ProductResponse> filterSearch(@RequestParam(required = false) String name,
+                                              @RequestParam(required = false) String brand,
+                                              @RequestParam(required = false) Double minPrice,
+                                              @RequestParam(required = false) Double maxPrice) {
+
+        return productService.filterSearch(name, brand, minPrice, maxPrice);
     }
 
 }

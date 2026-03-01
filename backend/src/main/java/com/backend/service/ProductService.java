@@ -4,11 +4,13 @@ import com.backend.dto.ProductResponse;
 import com.backend.entity.Product;
 import com.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -31,6 +33,17 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         return mapToProductResponse(product);
+    }
+
+    public List<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice) {
+        List<Product> products = productRepository.findByFilters(name, brand, minPrice, maxPrice);
+
+        log.info("Filtered products: {}", products);
+
+        return products.stream()
+                .map(this::mapToProductResponse)
+                .toList();
+
     }
 
     private ProductResponse mapToProductResponse(Product product) {
