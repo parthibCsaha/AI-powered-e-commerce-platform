@@ -43,7 +43,7 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "User registered successfully with id: " + savedUser.getUsername();
+        return "User registered successfully with username: " + savedUser.getUsername();
     }
 
     public String login(LoginRequest loginRequest) {

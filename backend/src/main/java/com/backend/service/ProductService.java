@@ -1,10 +1,14 @@
 package com.backend.service;
 
+import com.backend.dto.ProductRequest;
 import com.backend.dto.ProductResponse;
 import com.backend.entity.Product;
+import com.backend.exception.ResourceNotFoundException;
 import com.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,30 +24,39 @@ public class ProductService {
     public List<ProductResponse> getProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream()
-                .map(new Function<Product, ProductResponse>() {
-                    @Override
-                    public ProductResponse apply(Product product) {
-                        return mapToProductResponse(product);
-                    }
-                })
+                .map(this::mapToProductResponse)
                 .toList();
     }
 
     public ProductResponse getProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return mapToProductResponse(product);
     }
 
-    public List<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice) {
-        List<Product> products = productRepository.findByFilters(name, brand, minPrice, maxPrice);
+    public Page<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice, Pageable pageable) {
+        Page<Product> products = productRepository.findByFilters(
+                name,
+                brand,
+                minPrice,
+                maxPrice,
+                pageable
+        );
 
-        log.info("Filtered products: {}", products);
+        return products.map(this::mapToProductResponse);
+    }
 
-        return products.stream()
-                .map(this::mapToProductResponse)
-                .toList();
+    public ProductResponse addProduct(ProductRequest productRequest) {
+        Product product = new Product();
+        product.setName(productRequest.name());
+        product.setBrand(productRequest.brand());
+        product.setDescription(productRequest.description());
+        product.setPrice(productRequest.price());
+        product.setStock(productRequest.stock());
+        product.setRating(productRequest.rating());
 
+        Product savedProduct = productRepository.save(product);
+        return mapToProductResponse(savedProduct);
     }
 
     private ProductResponse mapToProductResponse(Product product) {
@@ -56,5 +69,4 @@ public class ProductService {
                 product.getRating()
         );
     }
-
 }
