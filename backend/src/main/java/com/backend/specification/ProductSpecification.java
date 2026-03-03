@@ -14,7 +14,6 @@ public class ProductSpecification {
                 return (root, query, cb) -> {
                         List<Predicate> predicates = new ArrayList<>();
 
-                        // Brand — partial, case-insensitive match
                         if (filter.brand() != null && !filter.brand().isBlank()) {
                                 predicates.add(
                                         cb.like(
@@ -24,7 +23,6 @@ public class ProductSpecification {
                                 );
                         }
 
-                        // Product name — partial, case-insensitive match
                         if (filter.productName() != null && !filter.productName().isBlank()) {
                                 predicates.add(
                                         cb.like(
@@ -34,7 +32,7 @@ public class ProductSpecification {
                                 );
                         }
 
-                        // Price range
+
                         if (filter.minPrice() != null) {
                                 predicates.add(
                                         cb.greaterThanOrEqualTo(
@@ -50,7 +48,6 @@ public class ProductSpecification {
                                 );
                         }
 
-                        // Minimum rating
                         if (filter.minRating() != null) {
                                 predicates.add(
                                         cb.greaterThanOrEqualTo(

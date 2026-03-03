@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
@@ -21,8 +19,10 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductResponse> getProducts() {
-        return productService.getProducts();
+    public Page<ProductResponse> getProducts(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productService.getProducts(pageable);
     }
 
     @GetMapping("/{id}")
@@ -48,6 +48,20 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size);
 
         return productService.filterSearch(name, brand, minPrice, maxPrice, pageable);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+        ProductResponse productResponse = productService.updateProduct(id, productRequest);
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok().build();
     }
 
 }

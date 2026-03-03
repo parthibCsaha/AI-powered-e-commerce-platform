@@ -11,9 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.function.Function;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,11 +18,9 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public List<ProductResponse> getProducts() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(this::mapToProductResponse)
-                .toList();
+    public Page<ProductResponse> getProducts(Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(this::mapToProductResponse);
     }
 
     public ProductResponse getProduct(Long id) {
@@ -57,6 +52,28 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
         return mapToProductResponse(savedProduct);
+    }
+
+    public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        product.setName(productRequest.name());
+        product.setBrand(productRequest.brand());
+        product.setDescription(productRequest.description());
+        product.setPrice(productRequest.price());
+        product.setStock(productRequest.stock());
+        product.setRating(productRequest.rating());
+
+        Product updatedProduct = productRepository.save(product);
+        return mapToProductResponse(updatedProduct);
+    }
+
+    public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
+        productRepository.deleteById(id);
     }
 
     private ProductResponse mapToProductResponse(Product product) {

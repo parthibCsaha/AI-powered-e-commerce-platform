@@ -35,10 +35,11 @@ public class AiService {
         private static final JsonMapper JSON_MAPPER = JsonMapper.builder().build();
 
         public AiSearchResponse aiSearchProducts(String userQuery) {
+
                 String prompt = buildPrompt(userQuery);
                 String aiResponse = callGroqApi(prompt);
 
-                log.debug("Raw AI response:\n{}", aiResponse);
+                log.info("Raw AI response:\n{}", aiResponse);
 
                 // Strip markdown code fences if present (e.g. ```json ... ```)
                 String cleanedResponse = stripMarkdownCodeFences(aiResponse);
@@ -148,7 +149,6 @@ public class AiService {
                         {
                           "brand": string or null,
                           "productName": string or null,
-                          "category": string or null,
                           "minPrice": number or null,
                           "maxPrice": number or null,
                           "minRating": number or null,
@@ -159,19 +159,18 @@ public class AiService {
                         Rules:
                         - "brand": extract brand name if mentioned (e.g. "Nike", "Apple", "Samsung")
                         - "productName": extract specific product name if mentioned (e.g. "iPhone 15", "Air Max")
-                        - "category": extract product category if mentioned (e.g. "shoes", "electronics", "clothing")
                         - "minPrice"/"maxPrice": extract price range. "under $100" → maxPrice=100. "above $50" → minPrice=50
                         - "minRating": extract minimum rating if mentioned. "highly rated" → 4.0, "top rated" → 4.5
                         - "keywords": extract descriptive words that help match product names/descriptions (colors, materials, features, etc.)
 
                         Examples:
                         Query: "cheap Nike running shoes"
-                        {"brand":"Nike","productName":null,"category":"shoes","minPrice":null,"maxPrice":null,"minRating":null,"keywords":["running","cheap"]}
+                        {"brand":"Nike","productName":null,"minPrice":null,"maxPrice":null,"minRating":null,"keywords":["running","cheap"]}
 
                         Query: "Samsung phones under $500 with good reviews"
-                        {"brand":"Samsung","productName":null,"category":"phones","minPrice":null,"maxPrice":500,"minRating":4.0,"keywords":["good reviews"]}
+                        {"brand":"Samsung","productName":null,"minPrice":null,"maxPrice":500,"minRating":4.0,"keywords":["good reviews"]}
 
                         Query: "red winter jacket between $50 and $150"
-                        {"brand":null,"productName":null,"category":"jacket","minPrice":50,"maxPrice":150,"minRating":null,"keywords":["red","winter"]}
+                        {"brand":null,"productName":null,"minPrice":50,"maxPrice":150,"minRating":null,"keywords":["red","winter"]}
                         """;
 }
