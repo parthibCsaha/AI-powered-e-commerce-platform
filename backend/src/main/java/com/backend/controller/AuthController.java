@@ -2,7 +2,6 @@ package com.backend.controller;
 
 import com.backend.dto.LoginRequest;
 import com.backend.dto.RegisterRequest;
-import com.backend.entity.User;
 import com.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

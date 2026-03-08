@@ -1,10 +1,10 @@
 package com.backend.controller;
 
+import com.backend.dto.PageResponse;
 import com.backend.dto.ProductRequest;
 import com.backend.dto.ProductResponse;
 import com.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public Page<ProductResponse> getProducts(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
+    public PageResponse<ProductResponse> getProducts(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productService.getProducts(pageable);
     }
@@ -38,12 +38,12 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public Page<ProductResponse> filterSearch(@RequestParam(required = false) String name,
-                                              @RequestParam(required = false) String brand,
-                                              @RequestParam(required = false) Double minPrice,
-                                              @RequestParam(required = false) Double maxPrice,
-                                              @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size) {
+    public PageResponse<ProductResponse> filterSearch(@RequestParam(required = false) String name,
+                                                       @RequestParam(required = false) String brand,
+                                                       @RequestParam(required = false) Double minPrice,
+                                                       @RequestParam(required = false) Double maxPrice,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 

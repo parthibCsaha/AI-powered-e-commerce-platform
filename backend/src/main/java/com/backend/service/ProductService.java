@@ -1,5 +1,6 @@
 package com.backend.service;
 
+import com.backend.dto.PageResponse;
 import com.backend.dto.ProductRequest;
 import com.backend.dto.ProductResponse;
 import com.backend.entity.Product;
@@ -7,6 +8,8 @@ import com.backend.exception.ResourceNotFoundException;
 import com.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public Page<ProductResponse> getProducts(Pageable pageable) {
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
+    public PageResponse<ProductResponse> getProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
-        return products.map(this::mapToProductResponse);
+        Page<ProductResponse> productResponses = products.map(this::mapToProductResponse);
+        return PageResponse.form(productResponses);
     }
 
     public ProductResponse getProduct(Long id) {
@@ -29,7 +34,7 @@ public class ProductService {
         return mapToProductResponse(product);
     }
 
-    public Page<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice, Pageable pageable) {
+    public PageResponse<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice, Pageable pageable) {
         Page<Product> products = productRepository.findByFilters(
                 name,
                 brand,
@@ -38,9 +43,11 @@ public class ProductService {
                 pageable
         );
 
-        return products.map(this::mapToProductResponse);
+        Page<ProductResponse> productResponses = products.map(this::mapToProductResponse);
+        return PageResponse.form(productResponses);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public ProductResponse addProduct(ProductRequest productRequest) {
         Product product = new Product();
         product.setName(productRequest.name());
@@ -54,6 +61,7 @@ public class ProductService {
         return mapToProductResponse(savedProduct);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
@@ -69,6 +77,7 @@ public class ProductService {
         return mapToProductResponse(updatedProduct);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Product not found with id: " + id);

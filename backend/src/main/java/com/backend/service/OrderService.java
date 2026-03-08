@@ -32,12 +32,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     public List<OrderResponse> getAllOrders(String username, Pageable pageable) {
-        // Single efficient query with JOIN FETCH - loads orders, items, and products in one go
+
         Page<Order> orders = orderRepository.findByUserUsernameWithItems(username, pageable);
 
         List<OrderResponse> orderResponses = new ArrayList<>();
 
-        // All data is already loaded in memory - no additional queries
         for (Order order : orders.getContent()) {
             for (OrderItem item : order.getItems()) {
                 OrderResponse orderResponse = new OrderResponse(
