@@ -21,6 +21,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    // ===================== get all products with pagination and sorting =====================
+
     @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public PageResponse<ProductResponse> getProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
@@ -28,11 +30,15 @@ public class ProductService {
         return PageResponse.form(productResponses);
     }
 
+    // ===================== get product by id =====================
+
     public ProductResponse getProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return mapToProductResponse(product);
     }
+
+    // ===================== filter and search products =====================
 
     public PageResponse<ProductResponse> filterSearch(String name, String brand, Double minPrice, Double maxPrice, Pageable pageable) {
         Page<Product> products = productRepository.findByFilters(
@@ -47,6 +53,8 @@ public class ProductService {
         return PageResponse.form(productResponses);
     }
 
+    // ===================== add product =====================
+
     @CacheEvict(value = "products", allEntries = true)
     public ProductResponse addProduct(ProductRequest productRequest) {
         Product product = new Product();
@@ -60,6 +68,8 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
         return mapToProductResponse(savedProduct);
     }
+
+    // ===================== update product =====================
 
     @CacheEvict(value = "products", allEntries = true)
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
@@ -77,6 +87,8 @@ public class ProductService {
         return mapToProductResponse(updatedProduct);
     }
 
+    // ===================== delete product =====================
+
     @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
@@ -84,6 +96,8 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    // ===================== helper method to map Product to ProductResponse =====================
 
     private ProductResponse mapToProductResponse(Product product) {
         return new ProductResponse(
