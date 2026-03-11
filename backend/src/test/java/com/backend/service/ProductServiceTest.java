@@ -1,4 +1,4 @@
-package com.backend.servicetest;
+package com.backend.service;
 
 import com.backend.dto.PageResponse;
 import com.backend.dto.ProductRequest;
@@ -6,7 +6,6 @@ import com.backend.dto.ProductResponse;
 import com.backend.entity.Product;
 import com.backend.exception.ResourceNotFoundException;
 import com.backend.repository.ProductRepository;
-import com.backend.service.ProductService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

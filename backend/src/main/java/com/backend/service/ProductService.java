@@ -27,7 +27,7 @@ public class ProductService {
     public PageResponse<ProductResponse> getProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         Page<ProductResponse> productResponses = products.map(this::mapToProductResponse);
-        return PageResponse.form(productResponses);
+        return PageResponse.from(productResponses);
     }
 
     // ===================== get product by id =====================
@@ -50,7 +50,7 @@ public class ProductService {
         );
 
         Page<ProductResponse> productResponses = products.map(this::mapToProductResponse);
-        return PageResponse.form(productResponses);
+        return PageResponse.from(productResponses);
     }
 
     // ===================== add product =====================

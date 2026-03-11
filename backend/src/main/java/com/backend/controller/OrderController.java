@@ -41,4 +41,12 @@ public class OrderController {
 
     }
 
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkoutCart(Principal principal) {
+
+        String response = orderService.checkoutCart(principal.getName());
+        return ResponseEntity.ok(response);
+
+    }
+
 }

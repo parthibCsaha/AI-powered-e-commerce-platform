@@ -15,7 +15,7 @@ public record PageResponse<T>(
         boolean first
 ) implements Serializable {
 
-    public static <T> PageResponse<T> form(Page<T> page) {
+    public static <T> PageResponse<T> from(Page<T> page) {
         return new PageResponse<>(
                 page.getContent(),
                 page.getNumber(),
