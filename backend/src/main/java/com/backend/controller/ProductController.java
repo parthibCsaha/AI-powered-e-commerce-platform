@@ -3,13 +3,20 @@ package com.backend.controller;
 import com.backend.dto.PageResponse;
 import com.backend.dto.ProductRequest;
 import com.backend.dto.ProductResponse;
+import com.backend.dto.ReviewRequest;
 import com.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
+
+import java.security.Principal;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/product")
@@ -62,6 +69,12 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/review")
+    public ResponseEntity<?> productReview(@RequestBody ReviewRequest reviewRequest, Principal principal) {
+        String result = productService.addReview(reviewRequest, principal.getName());
+        return ResponseEntity.ok(result);
     }
 
 }

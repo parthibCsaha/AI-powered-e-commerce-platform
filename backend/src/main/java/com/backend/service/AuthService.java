@@ -34,7 +34,7 @@ public class AuthService {
         newUser.setEmail(registerRequest.email());
         newUser.setRole(registerRequest.role());
         User savedUser = userRepository.save(newUser);
-        log.info("new user :{}", savedUser);
+        log.debug("new user :{}", savedUser);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 registerRequest.username(),
@@ -47,7 +47,7 @@ public class AuthService {
     }
 
     public String login(LoginRequest loginRequest) {
-        log.info("login request :{}", loginRequest.username());
+        log.debug("login request :{}", loginRequest.username());
 
         Authentication authentication;
         try {
@@ -64,17 +64,17 @@ public class AuthService {
         }
 
         if (authentication.isAuthenticated()) {
-            log.info("User {} logged in successfully", loginRequest.username());
+            log.debug("User {} logged in successfully", loginRequest.username());
         } else {
             log.warn("Failed login attempt for user {}", loginRequest.username());
             return "Invalid username or password";
         }
 
         String jwt = jwtUtil.generateToken(loginRequest.username());
-        log.info("Generated JWT for user {}: {}", loginRequest.username(), jwt);
+        log.debug("Generated JWT for user {}: {}", loginRequest.username(), jwt);
 
 
-        return "Login successful. JWT token: " + jwt;
+        return "Login successful. JWT token: \n" + jwt;
     }
 
 

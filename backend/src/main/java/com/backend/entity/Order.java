@@ -32,7 +32,7 @@ public class Order {
     private OrderStatus status;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

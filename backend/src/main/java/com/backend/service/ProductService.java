@@ -3,11 +3,22 @@ package com.backend.service;
 import com.backend.dto.PageResponse;
 import com.backend.dto.ProductRequest;
 import com.backend.dto.ProductResponse;
+import com.backend.dto.ReviewRequest;
+import com.backend.entity.OrderItem;
 import com.backend.entity.Product;
+import com.backend.entity.Review;
+import com.backend.entity.User;
 import com.backend.exception.ResourceNotFoundException;
+import com.backend.repository.OrderItemRepository;
 import com.backend.repository.ProductRepository;
+import com.backend.repository.ReviewRepository;
+import com.backend.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -20,6 +31,12 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
+
+    private final OrderItemRepository orderItemRepository;
+
+    private final ReviewRepository reviewRepository;
+
+    private final UserRepository userRepository;
 
     // ===================== get all products with pagination and sorting =====================
 
@@ -109,4 +126,29 @@ public class ProductService {
                 product.getRating()
         );
     }
+
+    public String addReview(ReviewRequest reviewRequest, String name) {
+        Product product = productRepository.findById(reviewRequest.productId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + reviewRequest.productId()));
+        
+        User user = userRepository.findByUsername(name)
+                            .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + name));
+
+        boolean flag = orderItemRepository.existsUserPurchase(product.getId(), name);
+
+        if (!flag) {
+            return "You can only review products you have purchased.";
+        }
+
+        Review review = new Review();
+        review.setComment(reviewRequest.comment());
+        review.setProduct(product);
+        review.setUsername(name);
+        review.setUser(user);
+        reviewRepository.save(review);
+
+        return "Your review has been added successfully.";
+
+    }
+
 }
