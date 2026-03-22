@@ -2,6 +2,8 @@ package com.backend.exception;
 
 
 import com.backend.dto.ErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -21,6 +23,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse handleUnauthorizedException(UnauthorizedException ex) {
         return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleRateLimitExceededException(RateLimitExceededException ex) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ErrorResponse(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

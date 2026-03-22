@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -47,7 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtFilter, RateLimitFilter.class);
         return http.build();
     }
 
